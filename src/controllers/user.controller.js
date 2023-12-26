@@ -10,7 +10,9 @@ const registerUser = asyncHandler(async (req, res, next) => {
 
   // Validation - not empty.
   if (
-    [username, email, password, fullName].some((field) => field?.trim() === "")
+    [fullName, email, username, password].some(
+      (field) => field?.trim() === undefined
+    )
   )
     throw new ApiError(400, "All fields are required");
 
@@ -23,8 +25,25 @@ const registerUser = asyncHandler(async (req, res, next) => {
     throw new ApiError(409, "User with email or username already exists.");
 
   // Check for images, ckeck for avatar.
-  const avtarLocalPath = req.files?.avatar[0]?.path;
-  const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  const avtarLocalPath = req.files?.avatar?.[0]?.path;
+  // let avtarLocalPath;
+  // if (
+  //   req.files &&
+  //   Array.isArray(req.files.avatar) &&
+  //   req.files.avatar.length > 0
+  // ) {
+  //   coverImageLocalPath = req.files.avatar[0].path;
+  // }
+  const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
+  // let coverImageLocalPath;
+  // if (
+  //   req.files &&
+  //   Array.isArray(req.files.coverImage) &&
+  //   req.files.coverImage.length > 0
+  // ) {
+  //   coverImageLocalPath = req.files.coverImage[0].path;
+  // }
+
   if (!avtarLocalPath) throw new ApiError(400, "Avatar file is required.");
 
   // Upload avatar to cloudinary.
